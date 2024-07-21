@@ -1,0 +1,44 @@
+#if (!require("BiocManager", quietly = TRUE))
+#  install.packages("BiocManager")
+#BiocManager::install("Biostrings")
+library('Biostrings')
+packageVersion("Biostrings") # ‘2.70.3’
+setwd("C:/Users/jaxk2")
+getwd()
+
+fasta <- readDNAStringSet("Path/to/mature_sequences.fas")
+
+# Get original and modified names
+og_names <- names(fasta)
+
+#define functions for modifications
+modify_name1 <- function(name) {
+  sub(".*?-", "", name)
+}
+
+modify_name2 <- function(name) {
+  sub("^(([^-]*-){1}[^-]*)-.*", "\\1", name)
+}
+
+modify_name3 <- function(name) {
+  sub("_.*", "", name)
+}
+
+modify_name4 <- function(name) {
+  gsub("-", "", name)
+}
+
+# apply name modification functions
+modified_names <- sapply(og_names, modify_name1)
+modified_names <- sapply(modified_names, modify_name2)
+modified_names <- sapply(modified_names, modify_name3)
+modified_names <- sapply(modified_names, modify_name4)
+
+# Combine original and modified names, separate by pipe '|' or desired separator 
+new_names <- paste(modified_names, og_names, sep=" | ")
+
+#assign the updated names to the fasta file 
+names(fasta) <- new_names
+# Write modified Fasta file
+writeXStringSet(fasta, "PAth/to/modified_mature_sequences.fas", format = "fasta")
+```
