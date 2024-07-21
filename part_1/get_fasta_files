@@ -1,0 +1,18 @@
+# download the first 13 mammal mature miRNA seqs from https://mirgenedb.org/download exclude the all_species (since it has other than mammals) 
+mkdir fasta_files 
+wget https://mirgenedb.org/fasta/hsa?mat=1
+wget https://mirgenedb.org/fasta/mml?mat=1
+wget https://mirgenedb.org/fasta/mmu?mat=1
+wget https://mirgenedb.org/fasta/rno?mat=1
+wget https://mirgenedb.org/fasta/cpo?mat=1
+wget https://mirgenedb.org/fasta/ocu?mat=1
+wget https://mirgenedb.org/fasta/cfa?mat=1
+wget https://mirgenedb.org/fasta/bta?mat=1
+wget https://mirgenedb.org/fasta/dno?mat=1
+wget https://mirgenedb.org/fasta/ete?mat=1
+wget https://mirgenedb.org/fasta/sha?mat=1
+wget https://mirgenedb.org/fasta/mdo?mat=1
+wget https://mirgenedb.org/fasta/oan?mat=1
+
+# merge the fasta files into one
+cat *.fas > mature_sequences.fas
