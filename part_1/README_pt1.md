@@ -404,6 +404,15 @@ sbatch sbatch_4_r.sh
 
 
 
+## Run_mantel.R
+Mantel test tests for correlation between two matrices. Pairwise miRNA co-occurrence distance and pairwise miRNA alignment dissimilarity values stored each as dist objects can be correlated. 
+
+Usage: run ```Run_mantel.R``` in RStudio.
+
+
+
+
+
 
 
 
