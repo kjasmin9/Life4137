@@ -384,6 +384,23 @@ blastn -query all_fasta_1seq.fas -db db_output -word_size 4 -out alignment_1seq 
 
 
 
+insert the dissimilarity_vs_co-occ.dist.R here
+
+
+
+## list2dist.R & sbatch_4_r.sh
+In bash write an R script to convert a list object into dist object.
+Use the scripts ```list2dist.R``` and ```sbatch_4_r.sh```.
+```list2dist.R``` converts list objects of miRNA pairwise co-occurrence distance and dissimilarity scores into dist (matrix format) objects. 
+```sbatch_4_r.sh``` serves to run ```list2dist.R``` as batch job. 
+list2dist (spaa package function), is time-consuming for large list objects, hence it is recommended to run the function as a background job.
+Usage 
+```
+chmod +x list2dist.R
+chmod +x sbatch_4_r.sh
+sbatch sbatch_4_r.sh
+```
+
 
 
 
