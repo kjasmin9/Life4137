@@ -1,6 +1,7 @@
 # Part 1 analysis tutorial
  
 This is a tutorial for miRNA analysis across mammal species.
+Please follow the steps in chronological order for reproducibility purposes.
 
 Main processes include: 
 - Fasta file header string modification 
@@ -9,7 +10,7 @@ Main processes include:
 - Alignment similarity scores and miRNA co-occurrence analysis (Mantel test, Kruskal–Wallis test, Dunn's test & plotting) 
 
 
-Versions of different fasta files are uploaded in Life4137/part_1 directory. The names of the files are kept the same as in the code.
+Versions of different fasta files and the list of miRNA families of interest are uploaded in Life4137/part_1/data files for part 1/ directory. The names of the files are kept the same as in the code.
 The miRNA co-occurrence data file is part of an ongoing research project and not available for public sharing.
 
 All packages for RStudio can be installed by: install.packages('Package_name'), unless stated otherwise.
@@ -43,7 +44,7 @@ cat *.fas > mature_sequences.fas
 ## get_miRNAs_of_interest.R
 
 in RStudio: ```get_miRNAs_of_interest.R``` .
-This code obtains a list of miRNAs of interest from the miRNA co-ccurrence data frame
+This code obtains a list of miRNAs of interest from the miRNA co-occurrence data frame
 miRNAs are present as Column names
 
 ```
@@ -113,7 +114,7 @@ writeXStringSet(fasta, "PAth/to/modified_mature_sequences.fas", format = "fasta"
 
 ## Seqkit 
 in bash: 
-seqkit to get the mirnas of interest 
+seqkit to get the miRNAs of interest 
 to install Seqkit: https://github.com/shenwei356/seqkit/releases/tag/v2.8.2 
 ```
 seqkit grep -f updated_mirnas_of.interest.csv modified_mature_sequences.fas > mirnas_of_interest.mature_sequences.fas
@@ -123,7 +124,7 @@ seqkit grep -f updated_mirnas_of.interest.csv modified_mature_sequences.fas > mi
 ## create_single_csv.py
 
 In bash: ```create_single_csv.py```
-python script to obtain separate csv files, each contininag a single miRNA family name (from the updated_mirnas_of.interest.csv)
+python script to obtain separate csv files, each containinag a single miRNA family name (from the updated_mirnas_of.interest.csv)
 
 ```
 #!/bin/bash
@@ -163,7 +164,7 @@ python3 create_single_csv.py # run the script
 
 In Bash: ```process_fasta.sh```
 this is a script to create single fasta files for each miRNA family from the modified_mature_sequences.fas
-The script needs to be in directory where csv outputs of create_single_csv.py are located
+The script needs to be in the directory where csv outputs of create_single_csv.py are located
 nano process_fasta.sh
 
 ```
@@ -200,7 +201,7 @@ chmod +x process_fasta.sh
 ## Modify_fasta_headers_2.R
 
 In RStudio: ```Modify_fasta_headers_2.R```
-Modify headers of all .fas files present in output directory from process_fasta.sh
+Modify headers of all .fas files present in the output directory from process_fasta.sh
 This code allows for the fasta file identifiers to be compatible with makeblastdb
 the input is a directory containing fasta files. 
 Usage: modify paths in the script
@@ -346,8 +347,9 @@ sbatch average_al.sh
 
 In Bash: ```extract_1st_seq.sh```
 
-This script extracts the first header and sequence from each fasta file in teh iput directory, the outputs are storead as a new fasta file
-Since within family similarity scores range form ~89% to 100%, one mature miRNA sequence is used to represent each miRNA family. 
+This script extracts the first header and sequence from each fasta file in the input directory, the outputs are stored as a new fasta file
+Since within-family similarity scores range from ~89% to 100%, one mature miRNA sequence is used to represent each miRNA family. 
+The working directory for this code is **4blast_fas/** (created from) Modify_fasta_headers_2.R.
 
 ```
 #!/bin/bash
@@ -355,7 +357,7 @@ Since within family similarity scores range form ~89% to 100%, one mature miRNA 
 # create empty output file
 output_file="all_fasta_1seq.fas" > $output_file
 
-# loop through each fasta file in the directory adn extract first ID and sequence
+# loop through each fasta file in the directory and extract first ID and sequence
 for file in *.fas
 do
   # output in output_file
@@ -368,7 +370,7 @@ chmod +x extract_1st_seq.sh
 ./extract_1st_seq.sh 
 ```
 
-## Blast alignemnt between miRNA families (all-vs-all)
+## Blast alignment between miRNA families (all-vs-all)
 
 In Bash: 
  
