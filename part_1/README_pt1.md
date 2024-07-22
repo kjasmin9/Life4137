@@ -411,6 +411,21 @@ Usage: run ```Run_mantel.R``` in RStudio.
 
 
 
+## dissimilarity_vs_co-occ.dist.R
+This script contains all the analyses conducted on and between the alignment output and miRNA co-occurrence data. 
+Main analyses include: 
+
+- miRNA string label modification
+- matching miRNA pairs for alignment and mi-RNA co-occurrence data
+- distance calculation for miRNA co-occurrence
+- data frame merge based on ni-RNA pairs
+- plots for distributions, regression, and boxplots
+- Kruskal Wallis test, Dunn's test, and prop.test
+
+
+
+
+
 
 
 
