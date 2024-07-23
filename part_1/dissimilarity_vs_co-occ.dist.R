@@ -177,7 +177,7 @@ merged.df.na <- merged.df.na %>%
 
 
 sum(!is.na(merged.df.na$dissimilarity_average)) #30,145 !is.na (i.e. aligned) 154755 is.na (i.e., not aligned)
-sum(!is.na(merged.df.na$dissimilarity_average)) #154755 is.na (i.e., not aligned)
+sum(is.na(merged.df.na$dissimilarity_average)) #154755 is.na (i.e., not aligned)
 
 
 #repeat with distance scores
