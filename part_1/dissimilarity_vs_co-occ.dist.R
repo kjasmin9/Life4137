@@ -288,16 +288,16 @@ ggplot(mirna_dist, aes(x = distance_score)) +
 
 
 #-------------------------BOX-PLOTS/REGRESSIONS---------------------------------start
-#to plot relationship between seq dissimilarity and miRNA absence/presence. 
+#to plot the relationship between seq dissimilarity and miRNA absence/presence. 
 
 #REGRESSION LINE 
-#only with aligend 
+#only with aligned 
 ggplot(merged.df.na.omit, aes(x = distance_score, y = dissimilarity_average)) +
   geom_point(alpha=0.9) +
   stat_smooth(method="lm",formula = y~poly(x,4)) +
-  labs(x = "miRNA Co-occurence Distance Score", 
+  labs(x = "miRNA Co-occurrence Distance Score", 
        y = "Pairwise mature miRNA sequence dissimilarity", 
-       title = "Relationship between miRNA Co-occurence Distance Score & 
+       title = "Relationship between miRNA Co-occurrence Distance Score & 
        Pairwise mature miRNA sequence dissimilarity") +
   theme_classic()
 
@@ -305,9 +305,9 @@ ggplot(merged.df.na.omit, aes(x = distance_score, y = dissimilarity_average)) +
 ggplot(merged.df, aes(x = distance_score, y = dissimilarity_average)) +
   geom_point(alpha=0.9) +
   stat_smooth(method="lm",formula = y~poly(x,4))+
-  labs(x = "miRNA Co-occurence Distance Score", 
+  labs(x = "miRNA Co-occurrence Distance Score", 
        y = "Pairwise mature miRNA sequence dissimilarity", 
-       title = "Relationship between miRNA Co-occurence Distance Score & 
+       title = "Relationship between miRNA Co-occurrence Distance Score & 
        Pairwise mature miRNA sequence dissimilarity") +
   theme_classic()
 
@@ -372,7 +372,7 @@ doBy::summary_by(distance_score ~ avg.diss.groups,
                  data = merged.df, 
                  FUN = median)
 
-# Kruskal Wallis adn Dunn's test with non aligned sequences included				 
+# Kruskal Wallis and Dunn's test with non-aligned sequences included				 
 kwt <- kruskal.test(distance_score ~ avg.diss.groups, data = merged.df)
 dunn.t <-  dunnTest(distance_score ~ avg.diss.groups, data = merged.df, method = "bonferroni")
 
@@ -427,7 +427,7 @@ p + geom_signif(
 
 #[10] is there a difference in the number of sequences with 0 dissimilarity score between co-occurring and not co-occurring sequences? --> carry out a prop.test
 # co-occurring sequences (distance scores == 0)  ;  not co-occurring sequences (distance score == 1)
-# conduct analysis for only aligned sequences and for all sequences (aligned+non-aligend) 
+# conduct analysis for only aligned sequences and for all sequences (aligned+non-aligned) 
 
 prop <- merged.df.na.omit %>%
   select(mirna1.x, mirna2.x, merged_mirna, distance_score, dissimilarity_average)
@@ -484,6 +484,6 @@ difference <- difference %>%
 write.csv(difference,file = "C:/Users/jaxk2/Downloads/non_aligned_pairs_1seq.csv", row.names = FALSE, col.names = FALSE)
 
 
-#Save df with miRNA co-occurrence distance scores and alignment dissimialrity scores
-# To be used in analysis for part 2 ...
+#Save df with miRNA co-occurrence distance scores and alignment dissimilarity scores
+# To be used in the analysis for part 2 ...
 write.csv(merged.df, file = "C:/Users/jaxk2/Downloads/merged.df.pt1_1seq", col.names = T)
