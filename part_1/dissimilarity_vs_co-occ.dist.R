@@ -217,7 +217,7 @@ merged.df.na <- merged.df.na %>%
   mutate(avg.distance.groups = factor(avg.distance.groups, levels = c("0%", "0-20%", "20-40%", "40-60%", "60-80%", "80-99%", "100%")))
 
 merged.df.na.omit <- merged.df.na %>%
-  select(merged_mirna, mirna1.x, mirna2.x,distance_score, dissimilarity_average, avg.diss.groups, avg.diss.groups2, avg.distance.groups, avg.distance.groups2 )
+  select(merged_mirna, mirna1.x, mirna2.x,distance_score, dissimilarity_average, avg.diss.groups, avg.distance.groups)
 
 merged.df.na.omit <- na.omit(merged.df.na)
 anyNA(merged.df.na.omit$avg.distance.groups) #FALSE for all 3 groups------------#check
