@@ -440,3 +440,5 @@ Main analyses include:
 ## References
 - Wei Shen*, Botond Sipos, and Liuyang Zhao. 2024. SeqKit2: A Swiss Army Knife for Sequence and Alignment Processing. iMeta e191. doi:10.1002/imt2.191.
 - Wei Shen, Shuai Le, Yan Li*, and Fuquan Hu*. SeqKit: a cross-platform and ultrafast toolkit for FASTA/Q file manipulation.
+- OpenAI, 2024. *ChatGPT: OpenAI's GPT-4 Language Model*. Available at: https://www.openai.com/chatgpt [Accessed 2 July 2024].
+
