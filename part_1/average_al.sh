@@ -25,7 +25,7 @@ do
   average_output="$output_dir/${base_name}_avg_al"
 
   # average the alignments for each file and save the result to the output file (with miRNA family name)
-  # This code was co-piloted with ChatGPT, an AI language model by OpenAI.
+  # This part of the code was co-piloted with ChatGPT, an AI language model by OpenAI.
   awk '{ sum += $3; count++ } END { if (count > 0) print sum / count; }' "$alignment" > "$average_output"
 
 done
