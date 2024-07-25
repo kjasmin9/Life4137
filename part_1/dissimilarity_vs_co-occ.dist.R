@@ -8,13 +8,15 @@ library(ISLR)
 library(ggpubr)
 library(FSA) # for DUNN test
 library(ggsignif)
-#every section separated by 5 lines and numbered in []
+# every section separated by 5 lines and numbered in []
 
 
 
 
 
 #[1] MIRNA STRING LABELS MODIFICATION
+setwd("C:/Users/jaxk2")
+getwd()
 #alignment3_wd4 <- read.table('C:/Users/jaxk2/Downloads/alignment3_wd4') #older alignement, has way less alignemnts
 alignment_wd4 <- read.table('C:/Users/jaxk2/Downloads/all_fasta_1seq_alignment') #alignment4_mirnas_of_interest_wd4 #all_fasta_1seq_alignment alignment_100_not100seqs
 colnames(alignment_wd4) <- c('column1', 'column2', 'column3')
@@ -120,7 +122,7 @@ avg.alignment_wd4 <- avg.alignment_wd4 %>%
 
 #merge the two: co-occurrence distance and alignment similarity scores
 ## keep 2 merged.dfs one with NA values and one where the NA values are replaced by 1s (in avg.dissimilarity)
-## values of 1 for dissimilarity are amually inserted as 30 random 30 non-aligned sequences were non-identical when manually aligned
+## values of 1 for dissimilarity are manually inserted as 30 random 30 non-aligned sequences that were non-identical when manually aligned
 ### use mirna_dist and avg.alignemnt_wd4
 
 merged.df.na <- merge(mirna_dist, avg.alignment_wd4, by = "merged_mirna", all.x = T)
@@ -146,7 +148,7 @@ write.csv(merged.df.na, file = "C:/Users/jaxk2/Downloads/merged.df.na_1seq", col
 ##use merged.df and merged.df.na
 
 #to group you first need to see the ranges of the dissimilarity values 
-  
+
 range(merged.df$dissimilarity_average) #0.0 1
 range(na.omit(merged.df.na$dissimilarity_average)) # 0.0 0.2
 summary(merged.df$dissimilarity_average)
@@ -156,8 +158,8 @@ summary(merged.df.na$distance_score)
 
 
 
-  
-#create column with dissimilarity group ranges: 
+
+#create a column with dissimilarity group ranges: 
 merged.df <- merged.df %>% 
   mutate(avg.diss.groups = case_when(dissimilarity_average == 0  ~ "0%", 
                                      dissimilarity_average > 0 & dissimilarity_average <= 0.05 ~ "0-5%", 
@@ -202,7 +204,7 @@ merged.df.na <- merged.df.na %>%
 
 
 
-#organise the levels in the new cols (needed for uniformity in boxplots)
+# Organise the levels in the new cols (needed for uniformity in boxplots)
 
 merged.df <- merged.df %>%
   mutate(avg.diss.groups = factor(avg.diss.groups, levels = c("0%", "0-5%", "5-10%", "10-15%", "15-20%", "100%")))
@@ -233,135 +235,170 @@ anyNA(merged.df.na.omit$avg.distance.groups) #FALSE for all 3 groups------------
 
 ## DISSIMILARITY DISTRIBUTION
 #with 1s added for non-aligned
-ggplot(merged.df, aes(x = dissimilarity_average)) +
-  geom_histogram(fill = 'blue' ) +
-  labs(x = "Pairwise mature miRNA sequence dissimilarity", 
+s1 <- ggplot(merged.df, aes(x = dissimilarity_average)) +
+  geom_histogram(fill = 'orange' ) +
+  labs(x = "miRNA Sequence Dissimilarity", 
        y = "Frequency", 
-       title = "Distribution of Pairwise Mature miRNA Sequence Dissimilarity") +
+       title = "Distribution miRNA Sequence Dissimilarity") +
   theme_minimal(12) +
   scale_x_continuous(breaks = seq(0, 1, 0.1)) +
-  theme(panel.background = element_rect())
-  
+  theme(panel.background = element_rect()) +
+  theme(plot.title = element_text(hjust = 0.5))
+
+# save high quality fig
+'ggsave("C:/Users/jaxk2/Downloads/dissimilarity_distribution_supp.png", plot = s1, width = 6, height = 4, units = "in", dpi = 300)'
+
+
 #distribution of seq dissimilarity score for aligned pairs (pairs in both alignments and miRNA co-occurrence df)
-ggplot(merged.df.na.omit, aes(x = dissimilarity_average)) +
-  geom_histogram(fill = 'orange') +
-  labs(x = "Pairwise mature miRNA sequence dissimilarity", 
+f2_dd <- ggplot(merged.df.na.omit, aes(x = dissimilarity_average)) +
+  geom_histogram(fill = 'blue') +
+  labs(x = "miRNA Sequence Dissimilarity", 
        y = "Frequency", 
-       title = "Distribution of Pairwise Mature miRNA Sequence Dissimilarity") +
+       title = "Distribution miRNA Sequence Dissimilarity") +
   theme_minimal()  +
   scale_x_continuous(breaks = seq(0, 1, 0.1)) +
-  theme(panel.background = element_rect())
-  
+  theme(panel.background = element_rect()) +
+  theme(plot.title = element_text(hjust = 0.5))
+
+'ggsave("C:/Users/jaxk2/Downloads/dissimilarity_distribution_MAIN.png", plot = f2_dd, width = 6, height = 4, units = "in", dpi = 300)'
+
+
 
 ## DISTANCE SCORE DISTRIBUTIONS
 #with all miRNA pairs  
-ggplot(merged.df, aes(x = distance_score)) +
-  geom_histogram(fill = 'blue') +
-  labs(x = "Distribution of miRNA co-occurrence Distance Scores", 
+s2 <- ggplot(merged.df, aes(x = distance_score)) +
+  geom_histogram(fill = 'orange') +
+  labs(x = "miRNA Co-Occurrence Distance", 
        y = "Frequency", 
-       title = "miRNA co-occurrence Distance Scores") +
+       title = "Distribution of miRNA Co-Occurrence Distance") +
   theme_minimal() +
   scale_x_continuous(breaks = seq(0, 1, 0.1)) +
-  theme(panel.background = element_rect())
+  theme(panel.background = element_rect())  +
+  theme(plot.title = element_text(hjust = 0.5)) #plot title in the center
+
+'ggsave("C:/Users/jaxk2/Downloads/distance_distribution_supp.png", plot = s2, width = 6, height = 4, units = "in", dpi = 300)'
+
 
 #with aligned miRNA pairs only
-ggplot(merged.df.na.omit, aes(x = distance_score)) +
-  geom_histogram(fill = 'orange') +
-  labs(x = "Distribution of miRNA co-occurrence Distance Scores", 
+f2_cd <- ggplot(merged.df.na.omit, aes(x = distance_score)) +
+  geom_histogram(fill = 'blue') +
+  labs(x = "miRNA Co-Occurrence Distance", 
        y = "Frequency", 
-       title = "miRNA co-occurrence Distance Scores") +
+       title = "Distribution of miRNA Co-Occurrence Distance") +
   theme_minimal() +
   scale_x_continuous(breaks = seq(0, 1, 0.1)) +
-  theme(panel.background = element_rect())
+  theme(panel.background = element_rect()) +
+  theme(plot.title = element_text(hjust = 0.5)) #plot title in the center
+
+'ggsave("C:/Users/jaxk2/Downloads/distance_distribution_MAIN.png", plot = f2_cd, width = 6, height = 4, units = "in", dpi = 300)'
+
 
 #for all distance scores for all pairs, before merging the alignment pairs
-ggplot(mirna_dist, aes(x = distance_score)) +
+s2.5 <- ggplot(mirna_dist, aes(x = distance_score)) +
   geom_histogram() +
-  labs(x = "Distribution of miRNA co-occurrence Distance Scores", 
+  labs(x = "miRNA Co-Occurrence Distance", 
        y = "Frequency", 
-       title = "miRNA co-occurrence Distance Scores") +
+       title = "Distribution of miRNA Co-Occurrence Distance") +
   theme_minimal() +
   scale_x_continuous(breaks = seq(0, 1, 0.1)) +
-  theme(panel.background = element_rect())
+  theme(panel.background = element_rect()) +
+  theme(plot.title = element_text(hjust = 0.5)) #plot title in the center
+
+'ggsave("C:/Users/jaxk2/Downloads/distance_distribution.all_supp.png", plot = s2.5, width = 6, height = 4, units = "in", dpi = 300)'
 
 #-----------------------------DISTRIBUTIONS-------------------------------------end
 
 
 #-------------------------BOX-PLOTS/REGRESSIONS---------------------------------start
-#to plot the relationship between seq dissimilarity and miRNA absence/presence. 
+#to plot the relationship between sequence dissimilarity and miRNA co-occurrence distance. 
 
 #REGRESSION LINE 
 #only with aligned 
-ggplot(merged.df.na.omit, aes(x = distance_score, y = dissimilarity_average)) +
-  geom_point(alpha=0.9) +
+f <- ggplot(merged.df.na.omit, aes(x = distance_score, y = dissimilarity_average)) +
+  geom_point(alpha=10) +
   stat_smooth(method="lm",formula = y~poly(x,4)) +
-  labs(x = "miRNA Co-occurrence Distance Score", 
-       y = "Pairwise mature miRNA sequence dissimilarity", 
-       title = "Relationship between miRNA Co-occurrence Distance Score & 
-       Pairwise mature miRNA sequence dissimilarity") +
-  theme_classic()
+  labs(x = "miRNA Co-occurence Distance", 
+       y = "miRNA Sequence Dissimilarity", 
+       title = "miRNA Co-Occurrence Distance vs. miRNA Sequence Dissimilarity") +
+  theme_classic() +
+  theme(plot.title = element_text(hjust = 0.5)) #plot title in the center
+# save at higher quality
+'ggsave("C:/Users/jaxk2/Downloads/correlation_MAIN.png", plot = f, width = 6, height = 4, units = "in", dpi = 300)'
 
 #with non-aligned
-ggplot(merged.df, aes(x = distance_score, y = dissimilarity_average)) +
+s3 <- ggplot(merged.df, aes(x = distance_score, y = dissimilarity_average)) +
   geom_point(alpha=0.9) +
-  stat_smooth(method="lm",formula = y~poly(x,4))+
-  labs(x = "miRNA Co-occurrence Distance Score", 
-       y = "Pairwise mature miRNA sequence dissimilarity", 
-       title = "Relationship between miRNA Co-occurrence Distance Score & 
-       Pairwise mature miRNA sequence dissimilarity") +
-  theme_classic()
+  labs(x = "miRNA Co-occurence Distance", 
+       y = "miRNA Sequence Dissimilarity", 
+       title = "miRNA Co-ccurrence Distance vs. miRNA Sequence Dissimilarity") +
+  theme_classic() +
+  theme(plot.title = element_text(hjust = 0.5)) #plot title in the center
+
+'ggsave("C:/Users/jaxk2/Downloads/correlation_supp.png", plot = s3, width = 6, height = 4, units = "in", dpi = 300)'
 
 
 #BOXPLOTS
 
+#x = dissimilarity groups, y = distance scores
+# used in main thesis
 
 #aligned + non aligned
-##avg.***groups
-#x = dissimilarity groups, y = distance scores
-ggplot(merged.df) +#input the 3 different: merged.df, merged.df.na, merged.df.na.omit
+ggplot(merged.df) +
   aes(x = avg.diss.groups, y = distance_score, fill = avg.diss.groups) +
   geom_boxplot() +
-  labs(x = 'Mature Sequence dissimilarity between pairs of miRNAs ', #average mature miRNA family pairwise dissimilarity score groups 
-       y = 'Level of co-occurrence between pair of miRNA families', 
-       title = 'Pairwise mature miRNA sequence dissimilarity groups &
-       Level of co-occurrence between pair of miRNA families boxplots') +
-  theme(legend.position = "none")
-
-#x = distance_groups y = sissimilarity scores
-ggplot(merged.df) +#input teh 3 different: merged.df, merged.df.na, merged.df.na.omit #na.omit yield interesting results
-  aes(x = avg.distance.groups, y = dissimilarity_average, fill = avg.distance.groups) +
-  geom_boxplot() +
-  labs(x = 'co-occurrence distance ', #average mature miRNA family pairwise dissimilarity score groups 
-       y = 'dissimilarity between mature sequences', 
-       title = 'Pairwise mature miRNA sequence dissimilarity groups &
-       Level of co-occurrence between pair of miRNA families boxplots') +
-  theme(legend.position = "none")
-
+  labs(x = 'miRNA Sequence Dissimilarity', #average mature miRNA family pairwise dissimilarity score groups 
+       y = 'miRNA Co-Occurrence Distance', 
+       title = 'miRNA Sequence Dissimilarity groups vs
+       miRNA Co-Occurrence Distance', 
+       fill = 'miRNA sequence
+Dissimilarity groups') +
+  theme(legend.position = "none") +
+  theme(plot.title = element_text(hjust = 0.5)) + #plot title in the center
+  scale_fill_brewer(palette = "Set1") #color-blind friendly palette
 
 
 #only aligned
-#x = dissimilarity groups, y = distance scores
-ggplot(merged.df.na.omit) +#input the 3 different: merged.df, merged.df.na, merged.df.na.omit
+p <- ggplot(merged.df.na.omit) +
   aes(x = avg.diss.groups, y = distance_score, fill = avg.diss.groups) +
   geom_boxplot() +
-  labs(x = 'Mature Sequence dissimilarity between pairs of miRNAs ', #average mature miRNA family pairwise dissimilarity score groups 
-       y = 'Level of co-occurrence between pair of miRNA families', 
-       title = 'Pairwise mature miRNA sequence dissimilarity groups &
-       Level of co-occurrence between pair of miRNA families boxplots') +
-  theme(legend.position = "left")
+  labs(x = 'miRNA Sequence Dissimilarity', #average mature miRNA family pairwise dissimilarity score groups 
+       y = 'miRNA Co-Occurrence Distance', 
+       title = 'miRNA Sequence Dissimilarity groups vs
+       miRNA Co-Occurrence Distance', 
+       fill = 'miRNA sequence
+Dissimilarity groups') +
+  theme(legend.position = "right") +
+  theme(plot.title = element_text(hjust = 0.5))  +
+  scale_fill_brewer(palette = "Set1") + #color-blind friendly palette
+  theme_bw()
+
 
 
 #x = distance_groups y = dissimilarity scores
-ggplot(merged.df.na.omit) +#input teh 3 different: merged.df, merged.df.na, merged.df.na.omit #na.omit yield interesting results
+# not used in thesis (just to view)
+
+# aligned + non-aligned
+ggplot(merged.df) +
+  aes(x = avg.distance.groups, y = dissimilarity_average, fill = avg.distance.groups) +
+  geom_boxplot() +
+  labs(x = 'co-occurrence distance ', 
+       y = 'dissimilarity between mature sequences', 
+       title = 'Pairwise mature miRNA sequence dissimilarity groups &
+       Level of co-occurrence between pair of miRNA families boxplots') +
+  theme(legend.position = "none") +
+  theme(plot.title = element_text(hjust = 0.5)) #plot title in the center
+
+# only aligned
+ggplot(merged.df.na.omit) +#input the 3 different: merged.df, merged.df.na, merged.df.na.omit #na.omit yield interesting results
   aes(x = avg.distance.groups, y = dissimilarity_average, fill = avg.distance.groups) +
   geom_boxplot() +
   labs(x = 'co-occurrence distance ', #average mature miRNA family pairwise dissimilarity score groups 
        y = 'dissimilarity between mature sequences', 
        title = 'Pairwise mature miRNA sequence dissimilarity groups &
        Level of co-occurrence between pair of miRNA families boxplots') +
-  theme(legend.position = "none")
+  theme(legend.position = "none") +
+  theme(plot.title = element_text(hjust = 0.5)) #plot title in the center
 
-#-------------------------BOX-PLOTS/REGRESSIONS---------------------------------end
 
 
 
@@ -376,7 +413,7 @@ doBy::summary_by(distance_score ~ avg.diss.groups,
 kwt <- kruskal.test(distance_score ~ avg.diss.groups, data = merged.df)
 dunn.t <-  dunnTest(distance_score ~ avg.diss.groups, data = merged.df, method = "bonferroni")
 
-# Kruskal Wallis adn Dunn's test with only aligned sequences 
+# Kruskal Wallis and Dunn's test with only aligned sequences 
 kwt.na.omit <- kruskal.test(distance_score ~ avg.diss.groups, data = merged.df.na.omit)
 dunn.t.na.omit <- dunnTest(distance_score ~ avg.diss.groups, data = merged.df.na.omit, method = "bonferroni")
 
@@ -393,24 +430,15 @@ dunn.t_df <-  data.frame(
 
 #useful to observe the significance labels to be added to the boxplot
 dunn.t_df$label <- ifelse(dunn.t_df$p_value < 0.001, "***",
-                              ifelse(dunn.t_df$p_value < 0.01, "**",
-                                     ifelse(dunn.t_df$p_value < 0.05, "*", "ns")))
-									 
+                          ifelse(dunn.t_df$p_value < 0.01, "**",
+                                 ifelse(dunn.t_df$p_value < 0.05, "*", "ns")))
 
 
-#add significant p-calues from Dunn's test to boxplot
-p <- ggplot(merged.df.na.omit) + #store plot as object
-  aes(x = avg.diss.groups, y = distance_score, fill = avg.diss.groups) +
-  geom_boxplot() +
-  labs(
-    x = 'Mature Sequence dissimilarity between pairs of miRNAs',
-    y = 'Level of co-occurrence between pair of miRNA families',
-    title = 'Pairwise mature miRNA Sequence Dissimilarity groups &\nLevel of co-occurrence between pair of miRNA families boxplots',
-    fill = 'Dissimilarity groups \nlegend'
-  ) +
-  theme(legend.position = "right")
 
-p + geom_signif(
+#add significant p-values from Dunn's test to boxplot
+#use previous ggplot to add significance values; from line 360 
+
+pp <- p + geom_signif(
   comparisons = list(
     c("0%", "15-20%"),
     c("0%", "5-10%")
@@ -421,11 +449,12 @@ p + geom_signif(
   tip_length = 0.03
 )
 
+'ggsave("C:/Users/jaxk2/Downloads/Boxplot_sig_MAIN.png", plot = pp, width = 6, height = 4, units = "in", dpi = 300)'
 
 
 
 
-#[10] is there a difference in the number of sequences with 0 dissimilarity score between co-occurring and not co-occurring sequences? --> carry out a prop.test
+#[10] Is there a difference in the number of sequences with 0 dissimilarity score between co-occurring and not co-occurring sequences? --> carry out a prop.test
 # co-occurring sequences (distance scores == 0)  ;  not co-occurring sequences (distance score == 1)
 # conduct analysis for only aligned sequences and for all sequences (aligned+non-aligned) 
 
@@ -442,30 +471,24 @@ prop <- prop %>%
 prop_cont <- table(prop$co_occurrence, prop$similarity)
 prop_cont <- as.data.frame(prop_cont[, c(2, 1)])
 prop.test(c(901, 5582), c(185+901, 5582+2105))
-'2-sample test for equality of proportions with continuity correction
 
-data:  c(901, 5582) out of c(1086, 5582)
-X-squared = 971.72, df = 1, p-value < 2.2e-16
-alternative hypothesis: two.sided
-95 percent confidence interval:
- -0.1932588 -0.1474410
-sample estimates:
-   prop 1    prop 2 
-0.8296501 1.0000000'
 
 #plot the prop data
 #create a column with proportion values for each group
 prop_cont$proportions <- c(185/(185+901), 2105/(2105+5582), 901/(185+901), 5582/(2105+5582))
-ggplot(prop_cont, aes(x = Var1, y = proportions, fill = as.factor(Var2))) +
+
+prop_hist <- ggplot(prop_cont, aes(x = Var1, y = proportions, fill = as.factor(Var2))) +
   geom_bar(stat = 'identity', position = 'stack') +
   scale_fill_manual(values = c("blue", "orange"), labels = c("Identical sequences", "Non-Identical sequences")) +
   labs(x = "Groups", y = "Proportion", fill = "Legend") + 
+  theme_bw() +
   geom_signif(comparisons = list(c("co-occurring", "not co-occurring")),
               map_signif_level = TRUE,
               annotations = "***",
               y_position = max(prop_cont$proportions) + 0.2,
               tip_length = 0.03)
 
+'ggsave("C:/Users/jaxk2/Downloads/Proportion_hist_MAIN.png", plot = prop_hist, width = 6, height = 4, units = "in", dpi = 300)'
 
 
 
@@ -481,9 +504,9 @@ difference <- difference %>%
   mutate(mirna1 = sub("-.*", "", unaligned_pairs), 
          mirna2 = sub(".*-", "", unaligned_pairs))
 #save
-write.csv(difference,file = "C:/Users/jaxk2/Downloads/non_aligned_pairs_1seq.csv", row.names = FALSE, col.names = FALSE)
+'write.csv(difference,file = "C:/Users/jaxk2/Downloads/non_aligned_pairs_1seq.csv", row.names = FALSE, col.names = FALSE)'
 
 
 #Save df with miRNA co-occurrence distance scores and alignment dissimilarity scores
 # To be used in the analysis for part 2 ...
-write.csv(merged.df, file = "C:/Users/jaxk2/Downloads/merged.df.pt1_1seq", col.names = T)
+'write.csv(merged.df, file = "C:/Users/jaxk2/Downloads/merged.df.pt1_1seq", col.names = T)'
