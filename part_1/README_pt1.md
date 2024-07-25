@@ -255,7 +255,8 @@ stopCluster(cl)
 
 In bash: ```blast.sh```
 blastn: 2.14.1+ Package: blast 2.14.1, build Mar 13 2024 14:27:45
-this script serves to run makeblastdb & blastn on all miRNA family .fas files
+this script serves to run makeblastdb & blastn on all miRNA family .fas files.
+
 Blast installation instructions: https://blast.ncbi.nlm.nih.gov/doc/blast-help/downloadblastdata.html 
 
 ```
