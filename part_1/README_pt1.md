@@ -114,8 +114,9 @@ writeXStringSet(fasta, "PAth/to/modified_mature_sequences.fas", format = "fasta"
 
 ## Seqkit 
 in bash: 
-seqkit to get the miRNAs of interest 
-to install Seqkit: https://github.com/shenwei356/seqkit/releases/tag/v2.8.2 
+seqkit to get the miRNAs of interest.
+
+To install Seqkit: https://github.com/shenwei356/seqkit/releases/tag/v2.8.2 
 ```
 seqkit grep -f updated_mirnas_of.interest.csv modified_mature_sequences.fas > mirnas_of_interest.mature_sequences.fas
 ```
@@ -124,7 +125,8 @@ seqkit grep -f updated_mirnas_of.interest.csv modified_mature_sequences.fas > mi
 ## create_single_csv.py
 
 In bash: ```create_single_csv.py```
-python script to obtain separate csv files, each containinag a single miRNA family name (from the updated_mirnas_of.interest.csv)
+python script to obtain separate csv files, each containing a single miRNA family name (from the updated_mirnas_of.interest.csv). 
+A part of this code was co-piloted with ChatGPT, an AI language model by OpenAI 
 
 ```
 #!/bin/bash
@@ -139,15 +141,16 @@ input_csv_path = 'Path/to/updated_mirnas_of.interest.csv'
 output_dir = 'Desired/path/to/mirnas_of_interest_482''
 os.makedirs(output_dir, exist_ok=True)
 
-# read the input CSV file
+# read the input CSV file 
+# content flagged with [!] was co-piloted with ChatGPT, an AI language model by OpenAI.
 with open(input_csv_path, newline='') as csvfile:
     reader = csv.reader(csvfile)
     for row in reader:
-        content = row[0]
-        filename = f"{content}.csv"
-        file_path = os.path.join(output_dir, filename)
+        content = row[0] # [!]
+        filename = f"{content}.csv" # [!]
+        file_path = os.path.join(output_dir, filename) #[!]
 
-        # write the content to the new file
+        # write the content to the new file [!]
         with open(file_path, 'w', newline='') as newfile:
             writer = csv.writer(newfile)
             writer.writerow([content])
@@ -302,7 +305,8 @@ sbatch blast.sh
 ## average_al.sh 
 
 In bash: ```average_al.sh ```
-This script calculates within miRNA family average similarity scores from blast alignemnt outputs.
+This script calculates within miRNA family average similarity scores from blast alignment outputs.
+A part of this code was co-piloted with ChatGPT, an AI language model by OpenAI 
 
 ```
 #!/bin/bash
@@ -332,6 +336,7 @@ do
   average_output="$output_dir/${base_name}_avg_al"
 
   # average the alignments for each file and save the result to the output file (with miRNA family name)
+  # This part of the code was co-piloted with ChatGPT, an AI language model by OpenAI.
   awk '{ sum += $3; count++ } END { if (count > 0) print sum / count; }' "$alignment" > "$average_output"
 
 done
