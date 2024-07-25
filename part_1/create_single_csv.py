@@ -11,7 +11,7 @@ output_dir = 'Desired/path/to/mirnas_of_interest_482''
 os.makedirs(output_dir, exist_ok=True)
 
 # read the input CSV file 
-# content flagged with '[!]' was co-piloted with ChatGPT, an AI language model by OpenAI.
+# content flagged with [!] was co-piloted with ChatGPT, an AI language model by OpenAI.
 with open(input_csv_path, newline='') as csvfile:
     reader = csv.reader(csvfile)
     for row in reader:
