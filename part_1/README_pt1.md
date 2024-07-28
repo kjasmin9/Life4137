@@ -28,22 +28,11 @@ This code contains the links for the 13 mamamals species FASTA files retrieved f
 
 in RStudio: ```get_miRNAs_of_interest.R``` .
 This code obtains a list of miRNAs of interest from the miRNA co-occurrence data frame
-miRNAs are present as Column names
+miRNAs are present as Column names. 
 
-```
-#read in the data
-mirnas_of_interest <- read.csv('/Path/to/updated_df1.csv', header = F )
-mirnas_of_interest <- mirnas_of_interest[1, c(5:ncol(mirnas_of_interest))] # remove phenotype columns
-mirnas_of_interest <- t(mirnas_of_interest)
-#insert '-' afer miRNA family name prefix 
-mirnas_of_interest1 <- gsub("^Mir", "Mir-", mirnas_of_interest[, 1])
-mirnas_of_interest1 <- gsub("^Novel", "Novel-", mirnas_of_interest1)
-mirnas_of_interest1 <- gsub("^Let", "Let-", mirnas_of_interest1)
-mirnas_of_interest1 <- gsub("^Bantam", "Bantam-", mirnas_of_interest1)
-mirnas_of_interest1 <- as.matrix(mirnas_of_interest1 )
-#saving mirnas_of_interest to filter out the fasta file 
-write.csv(mirnas_of_interest1, file = "/Desired/path/to/mirnas_of_interest1.csv", row.names = FALSE, col.names = FALSE)
-```
+The list of miRNA families of interest (i.e., present in the co-occurrence distance matrix) can be obtained from: https://github.com/kjasmin9/Life4137/blob/main/part_1/data%20files%20for%20part%201/updated_mirnas_of.interest.csv
+
+
 
 ## Modify_fasta_headers.R
 
