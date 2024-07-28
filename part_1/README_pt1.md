@@ -155,18 +155,33 @@ blastn -query blast_modified_mature_sequences.fas -db db_output -word_size 4 -ou
 ````
 
 
-insert the dissimilarity_vs_co-occ.dist.R here
+## dissimilarity_vs_co-occ.dist.R
+
+The ```dissimilarity_vs_co-occ.dist.R``` script contains all the analyses conducted on and between the alignment outputs from blastn searches and the miRNA co-occurrence data. 
+
+Main analyses include: 
+
+- miRNA string label modification
+- matching miRNA pairs for alignment and mi-RNA co-occurrence data
+- distance calculation for miRNA co-occurrence
+- data frame merge based on ni-RNA pairs
+- plots for distributions, regression, and boxplots
+- Kruskal Wallis test, Dunn's test, and prop.test
+
 
 
 
 ## list2dist.R & sbatch_4_r.sh
-In bash write an R script to convert a list object into dist object.
-Use the scripts ```list2dist.R``` and ```sbatch_4_r.sh```.
+
+This is an R script that converts a list object into dist object. 
+The input file for this code is 'merged.df.pt1_1seq', obtained from the script ```dissimilarity_vs_co-occ.dist.R```.
+
 ```list2dist.R``` converts list objects of miRNA pairwise co-occurrence distance and dissimilarity scores into dist (matrix format) objects. 
-```sbatch_4_r.sh``` serves to run ```list2dist.R``` as batch job. 
+
+```sbatch_4_r.sh``` serves to run ```list2dist.R``` as batch job in bash. 
 list2dist (spaa package function), is time-consuming for large list objects, hence it is recommended to run the function as a background job.
 
-Usage 
+**Usage** 
 ```
 chmod +x list2dist.R
 chmod +x sbatch_4_r.sh
@@ -179,19 +194,6 @@ sbatch sbatch_4_r.sh
 Mantel test tests for correlation between two matrices. Pairwise miRNA co-occurrence distance and pairwise miRNA alignment dissimilarity values stored each as dist objects can be correlated. 
 
 Usage: run ```Run_mantel.R``` in RStudio.
-
-
-
-## dissimilarity_vs_co-occ.dist.R
-This script contains all the analyses conducted on and between the alignment output and miRNA co-occurrence data. 
-Main analyses include: 
-
-- miRNA string label modification
-- matching miRNA pairs for alignment and mi-RNA co-occurrence data
-- distance calculation for miRNA co-occurrence
-- data frame merge based on ni-RNA pairs
-- plots for distributions, regression, and boxplots
-- Kruskal Wallis test, Dunn's test, and prop.test
 
 
 
