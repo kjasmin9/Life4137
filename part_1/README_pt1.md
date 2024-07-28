@@ -20,26 +20,9 @@ All packages for RStudio can be installed by: install.packages('Package_name'), 
 
 In Bash: ```get_fasta_files```
 
-```
-# download the first 13 mammal mature miRNA seqs from https://mirgenedb.org/download exclude the all_species (since it has other than mammals) 
-mkdir fasta_files 
-wget https://mirgenedb.org/fasta/hsa?mat=1
-wget https://mirgenedb.org/fasta/mml?mat=1
-wget https://mirgenedb.org/fasta/mmu?mat=1
-wget https://mirgenedb.org/fasta/rno?mat=1
-wget https://mirgenedb.org/fasta/cpo?mat=1
-wget https://mirgenedb.org/fasta/ocu?mat=1
-wget https://mirgenedb.org/fasta/cfa?mat=1
-wget https://mirgenedb.org/fasta/bta?mat=1
-wget https://mirgenedb.org/fasta/dno?mat=1
-wget https://mirgenedb.org/fasta/ete?mat=1
-wget https://mirgenedb.org/fasta/sha?mat=1
-wget https://mirgenedb.org/fasta/mdo?mat=1
-wget https://mirgenedb.org/fasta/oan?mat=1
+This code contains the links for the 13 mamamals species FASTA files retrieved from MirGeneDB database. it concatenates all FASTA files into one file: mature_sequences.fas. The concatenated FASTA file can also be directly downloaded from: https://github.com/kjasmin9/Life4137/blob/main/part_1/data%20files%20for%20part%201/mature_sequences.fas
 
-# merge the fasta files into one
-cat *.fas > mature_sequences.fas
-```
+
 
 ## get_miRNAs_of_interest.R
 
