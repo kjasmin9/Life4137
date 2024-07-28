@@ -11,7 +11,7 @@ Main processes include:
 
 
 Versions of different fasta files and the list of miRNA families of interest are uploaded in Life4137/part_1/data files for part 1/ directory. The names of the files are kept the same as in the code.
-The miRNA co-occurrence data file is part of an ongoing research project and not available for public sharing.
+The miRNA co-occurrence data file is part of an ongoing research project and is not available for public sharing.
 
 All packages for RStudio can be installed by: install.packages('Package_name'), unless stated otherwise.
 
@@ -38,9 +38,8 @@ The list of miRNA families of interest (i.e., present in the co-occurrence dista
 
 in RStudio: ```Modify_fasta_headers.R``` 
 This code modifies the headers of mature_sequences.fas, by adding the the family name in the FASTA file identifiers. 
-from ``` > Bta-Let-7-P1b_5p ```  to  ```>Let7 | Bta-Let-7-P1b_5p```
+From ``` > Bta-Let-7-P1b_5p ```  to  ```>Let7 | Bta-Let-7-P1b_5p```.
 Identifiers in this format are needed to filter the FASTA file for the miRNA families of interest using the seqkit command in bash. 
-
 
 
 
@@ -59,129 +58,41 @@ seqkit grep -f updated_mirnas_of.interest.csv modified_mature_sequences.fas > mi
 
 In bash: ```create_single_csv.py```
 python script to obtain separate csv files, each containing a single miRNA family name (from the updated_mirnas_of.interest.csv). 
-A part of this code was co-piloted with ChatGPT, an AI language model by OpenAI 
+A part of this code was co-piloted with ChatGPT, an AI language model by OpenAI. 
 
-```
-#!/bin/bash
-
-import csv
-import os
-
-# define the path to the input CSV file
-input_csv_path = 'Path/to/updated_mirnas_of.interest.csv'
-
-# define and create the directory to store the output files
-output_dir = 'Desired/path/to/mirnas_of_interest_482''
-os.makedirs(output_dir, exist_ok=True)
-
-# read the input CSV file 
-# content flagged with [!] was co-piloted with ChatGPT, an AI language model by OpenAI.
-with open(input_csv_path, newline='') as csvfile:
-    reader = csv.reader(csvfile)
-    for row in reader:
-        content = row[0] # [!]
-        filename = f"{content}.csv" # [!]
-        file_path = os.path.join(output_dir, filename) #[!]
-
-        # write the content to the new file [!]
-        with open(file_path, 'w', newline='') as newfile:
-            writer = csv.writer(newfile)
-            writer.writerow([content])
-
-print(f'Written .csv file can be found in {output_dir}')
-```
-Usage
+**Usage**
 ```
 chmod +x create_single_csv.py # give executable permissions
 python3 create_single_csv.py # run the script 
 ```
 
+
+
 ## process_fasta.sh
 
 In Bash: ```process_fasta.sh```
-this is a script to create single fasta files for each miRNA family from the modified_mature_sequences.fas
+this script creates single fasta files for each miRNA family from the modified_mature_sequences.fas.
 The script needs to be in the directory where csv outputs of create_single_csv.py are located
-nano process_fasta.sh
 
-```
-#!/bin/bash
-
-# define the input fasta file
-input_fasta="/Path/to/modified_mature_sequences.fas"
-
-# directory to store output files
-output_dir="mirna_family_single_fasta"
-
-# create directory (if not existent)
-mkdir -p "$output_dir"
-
-# loop over each CSV file in the current directory
-for csv_file in *.csv; do
-    # get the base name without extension
-    base_name=$(basename "$csv_file" .csv)
-    # assign the output file name
-    output_file="$output_dir/${base_name}.fas"
-    # use seqkit grep to filter sequences and save to the output file
-    seqkit grep -f "$csv_file" "$input_fasta" > "$output_file"
-done
-
-echo "All done! Files are saved in $output_dir"
-```
-Usage: 
+**Usage**
 ```
 chmod +x process_fasta.sh
 ./process_fasta.sh
 ```
 
 
+
 ## Modify_fasta_headers_2.R
 
 In RStudio: ```Modify_fasta_headers_2.R```
 Modify headers of all .fas files present in the output directory from process_fasta.sh
-This code allows for the fasta file identifiers to be compatible with makeblastdb
-the input is a directory containing fasta files. 
-Usage: modify paths in the script
+This code allows for the fasta file identifiers to be compatible with makeblastdb. 
+From ```>Let7 | Bta-Let-7-P1b_5p``` to ```> Bta-Let-7-P1b_5p | Let7```.
+The input is a directory containing fasta files. 
+This code was used to modify identifiers of the single miRNA family FASTA files and the FASTA file output from the seqkit command (mirnas_of_interest.mature_sequences.fas). The output of the second input FASTA file can be retrieved from: https://github.com/kjasmin9/Life4137/blob/main/part_1/data%20files%20for%20part%201/blast_modified_mature_sequences.fas
 
-```
-library(Biostrings) # packageVersion("Biostrings") ‘2.70.3’
-library(foreach) # packageVersion('foreach') ‘1.5.2’
-library(doParallel) # packageVersion('doParallel') ‘1.0.17’
+**Usage**: modify paths in the script
 
-# To run functions in a parallel way --> code runs faster
-numCores <- detectCores() - 1  # Use one less than the total number of cores available
-cl <- makeCluster(numCores)
-registerDoParallel(cl)
-
-
-#set input and output directories (create output dir if it deos not exist)
-input_dir <- "C:/Path/to/only_fas/"
-output_dir <- "C:/PAth/to/4blast_fas/"
-dir.create(output_dir)
-
-#store all the fasta files paths in a list
-fasta_files <- list.files(input_dir, pattern = "\\.fas", full.names = T)
-
-#now run code on all files at once
-foreach(fasta_file = fasta_files, .packages = "Biostrings") %dopar% {
-  fasta <- readDNAStringSet(fasta_file)
-  
-  fasta_ids <- names(fasta) #store fasta ids 
-  #apply desired cahnges to the fasta ids
-  fam_name <- sub("^([^|]+)\\|.+$", "\\1", fasta_ids)
-  member_name <- sub("^.+\\|(.*)$", "\\1", fasta_ids)
-  #merge the names in in the identifiers so that miRNA name precedes miRNA family prefix
-  adjusted_names <- paste(member_name, fam_name, sep = " | ")
-  
-  #assign new fasta ids to the fasta file
-  names(fasta) <- adjusted_names
-  #assign nemas to the output files 
-  output_file <- file.path(output_dir, basename(fasta_file))
-  
-  writeXStringSet(fasta, output_file, format = "fasta")
-}
-
-stopCluster(cl)
-```
 
 
 ## blast.sh
