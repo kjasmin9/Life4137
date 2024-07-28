@@ -103,44 +103,8 @@ this script serves to run makeblastdb & blastn on all miRNA family .fas files.
 
 Blast installation instructions: https://blast.ncbi.nlm.nih.gov/doc/blast-help/downloadblastdata.html 
 
-```
-#!/bin/bash
-#SBATCH --partition=defq 
-#SBATCH --nodes=1
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=8
-#SBATCH --mem=50g
-#SBATCH --time=24:00:00
-#SBATCH --job-name=blastn_for_430_fas_files
 
-#load module
-module load blast-uoneasy/2.14.1-gompi-2023a
-
-# define input and output directories
-input_dir="4blast_fas"
-output_dir="blastn_alignment"
-
-# create output directory if it does not exist
-mkdir -p "$output_dir"
-
-# loop through each FASTA file in the input directory
-for fasta_file in "$input_dir"/*.fas
-do
-  # get the base name of the file without the extension
-  base_name=$(basename "$fasta_file" .fas)
-
-  # define the output paths for the database and alignment
-  db_output="$output_dir/${base_name}_db"
-  alignment_output="$output_dir/${base_name}_alignment"
-
-  # create the blast database 
-  makeblastdb -in "$fasta_file" -out "$db_output" -parse_seqids -dbtype nucl
-
-  # perform the blastn search
-  blastn -query "$fasta_file" -db "$db_output" -word_size 4 -out "$alignment_output" -outfmt '6 qseqid sseqid pident'
-done
-```
-Usage
+**Usage**
 ```
 chmod +x blast.sh
 sbatch blast.sh
@@ -153,40 +117,7 @@ In bash: ```average_al.sh ```
 This script calculates within miRNA family average similarity scores from blast alignment outputs.
 A part of this code was co-piloted with ChatGPT, an AI language model by OpenAI 
 
-```
-#!/bin/bash
-#SBATCH --partition=defq
-#SBATCH --nodes=1
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=8
-#SBATCH --mem=50g
-#SBATCH --time=24:00:00
-#SBATCH --job-name=averaging
-
-
-# dfine input and output directories
-input_dir="Path/to/blast.sh/output_dir/all_alignments"
-output_dir="al_averages"
-
-# create output directory if it does not exist
-mkdir -p "$output_dir"
-
-# loop through each alignment file in the input directory
-for alignment in "$input_dir"/*_alignment
-do
-  # get the base name of the file without the extension
-  base_name=$(basename "$alignment" _alignment)
-
-  # define the output path for averages of each alignment file
-  average_output="$output_dir/${base_name}_avg_al"
-
-  # average the alignments for each file and save the result to the output file (with miRNA family name)
-  # This part of the code was co-piloted with ChatGPT, an AI language model by OpenAI.
-  awk '{ sum += $3; count++ } END { if (count > 0) print sum / count; }' "$alignment" > "$average_output"
-
-done
-```
-Usage
+**Usage**
 ```
 chmod +x average_al.sh 
 sbatch average_al.sh 
@@ -199,39 +130,29 @@ In Bash: ```extract_1st_seq.sh```
 
 This script extracts the first header and sequence from each fasta file in the input directory, the outputs are stored as a new fasta file
 Since within-family similarity scores range from ~89% to 100%, one mature miRNA sequence is used to represent each miRNA family. 
-The working directory for this code is **4blast_fas/** (created from) Modify_fasta_headers_2.R.
+The working directory for this code is **4blast_fas/** (created from) ```Modify_fasta_headers_2.R.```
 
-```
-#!/bin/bash
 
-# create empty output file
-output_file="all_fasta_1seq.fas" > $output_file
-
-# loop through each fasta file in the directory and extract first ID and sequence
-for file in *.fas
-do
-  # output in output_file
-  head -n 2 "$file" >> $output_file
-done
-```
-Usage
-```
-chmod +x extract_1st_seq.sh
-./extract_1st_seq.sh 
-```
 
 ## Blast alignment between miRNA families (all-vs-all)
 
 In Bash: 
  
-Run blastn for between miRNA families alignment
+Run blastn for between miRNA families alignment (one sequence per family)
 
 ```
-module load blast-uoneasy/2.14.1-gompi-2023a
+module load blast-uoneasy/2.14.1-gompi-2023a #activate blast if needed
 makeblastdb -in all_fasta_1seq.fas -out db_output -parse_seqids -dbtype nucl
 blastn -query all_fasta_1seq.fas -db db_output -word_size 4 -out alignment_1seq -outfmt '6 qseqid sseqid pident'
 ```
 
+The code was adapted to run on the FASTA file containing all sequences for the 430 miRNA families:
+
+```
+module load blast-uoneasy/2.14.1-gompi-2023a #activate blast if needed
+makeblastdb -in blast_modified_mature_sequences.fas -out db_output -parse_seqids -dbtype nucl
+blastn -query blast_modified_mature_sequences.fas -db db_output -word_size 4 -out alignment4_mirnas_of_interest_wd4 -outfmt '6 qseqid sseqid pident'
+````
 
 
 insert the dissimilarity_vs_co-occ.dist.R here
