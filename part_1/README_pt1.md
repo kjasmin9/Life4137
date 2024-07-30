@@ -1,6 +1,6 @@
 # Part 1 analysis tutorial
  
-This is a tutorial for miRNA analysis across mammal species.
+This is a tutorial for miRNA analysis across mammal species. <br />
 Please follow the steps in chronological order for reproducibility purposes.
 
 Main processes include: 
@@ -14,15 +14,16 @@ Versions of different fasta files and the list of miRNA families of interest are
 The miRNA co-occurrence data file is part of an ongoing research project and is not available for public sharing.
 
 All packages for RStudio can be installed by: install.packages('Package_name'), unless stated otherwise.
-
+<br />
+<br />
 
 ## get_fasta_files
 
 In Bash: ```get_fasta_files```
 
 This code contains the links for the 13 mamamals species FASTA files retrieved from MirGeneDB database. it concatenates all FASTA files into one file: mature_sequences.fas. The concatenated FASTA file can also be directly downloaded from: https://github.com/kjasmin9/Life4137/blob/main/part_1/data%20files%20for%20part%201/mature_sequences.fas
-
-
+<br />
+<br />
 
 ## get_miRNAs_of_interest.R
 
@@ -31,8 +32,8 @@ This code obtains a list of miRNAs of interest from the miRNA co-occurrence data
 miRNAs are present as Column names. 
 
 The list of miRNA families of interest (i.e., present in the co-occurrence distance matrix) can be obtained from: https://github.com/kjasmin9/Life4137/blob/main/part_1/data%20files%20for%20part%201/updated_mirnas_of.interest.csv
-
-
+<br />
+<br />
 
 ## Modify_fasta_headers.R
 
@@ -40,9 +41,8 @@ in RStudio: ```Modify_fasta_headers.R```
 This code modifies the headers of mature_sequences.fas, by adding the the family name in the FASTA file identifiers. 
 From ``` > Bta-Let-7-P1b_5p ```  to  ```>Let7 | Bta-Let-7-P1b_5p```.
 Identifiers in this format are needed to filter the FASTA file for the miRNA families of interest using the seqkit command in bash. 
-
-
-
+<br />
+<br />
 
 ## Seqkit 
 in bash: 
@@ -52,7 +52,8 @@ To install Seqkit: https://github.com/shenwei356/seqkit/releases/tag/v2.8.2
 ```
 seqkit grep -f updated_mirnas_of.interest.csv modified_mature_sequences.fas > mirnas_of_interest.mature_sequences.fas
 ```
-
+<br />
+<br />
 
 ## create_single_csv.py
 
@@ -65,8 +66,8 @@ A part of this code was co-piloted with ChatGPT, an AI language model by OpenAI.
 chmod +x create_single_csv.py # give executable permissions
 python3 create_single_csv.py # run the script 
 ```
-
-
+<br />
+<br />
 
 ## process_fasta.sh
 
@@ -79,8 +80,8 @@ The script needs to be in the directory where csv outputs of create_single_csv.p
 chmod +x process_fasta.sh
 ./process_fasta.sh
 ```
-
-
+<br />
+<br />
 
 ## Modify_fasta_headers_2.R
 
@@ -92,8 +93,8 @@ The input is a directory containing fasta files.
 This code was used to modify identifiers of the single miRNA family FASTA files and the FASTA file output from the seqkit command (mirnas_of_interest.mature_sequences.fas). The output of the second input FASTA file can be retrieved from: https://github.com/kjasmin9/Life4137/blob/main/part_1/data%20files%20for%20part%201/blast_modified_mature_sequences.fas
 
 **Usage**: modify paths in the script
-
-
+<br />
+<br />
 
 ## blast.sh
 
@@ -109,7 +110,8 @@ Blast installation instructions: https://blast.ncbi.nlm.nih.gov/doc/blast-help/d
 chmod +x blast.sh
 sbatch blast.sh
 ```
-
+<br />
+<br />
 
 ## average_al.sh 
 
@@ -122,7 +124,8 @@ A part of this code was co-piloted with ChatGPT, an AI language model by OpenAI
 chmod +x average_al.sh 
 sbatch average_al.sh 
 ```
-
+<br />
+<br />
 
 ## extract_1st_seq.sh
 
@@ -131,8 +134,8 @@ In Bash: ```extract_1st_seq.sh```
 This script extracts the first header and sequence from each fasta file in the input directory, the outputs are stored as a new fasta file
 Since within-family similarity scores range from ~89% to 100%, one mature miRNA sequence is used to represent each miRNA family. 
 The working directory for this code is **4blast_fas/** (created from) ```Modify_fasta_headers_2.R.```
-
-
+<br />
+<br />
 
 ## Blast alignment between miRNA families (all-vs-all)
 
@@ -153,7 +156,8 @@ module load blast-uoneasy/2.14.1-gompi-2023a #activate blast if needed
 makeblastdb -in blast_modified_mature_sequences.fas -out db_output -parse_seqids -dbtype nucl
 blastn -query blast_modified_mature_sequences.fas -db db_output -word_size 4 -out alignment4_mirnas_of_interest_wd4 -outfmt '6 qseqid sseqid pident'
 ````
-
+<br />
+<br />
 
 ## dissimilarity_vs_co-occ.dist.R
 
@@ -167,9 +171,8 @@ Main analyses include:
 - data frame merge based on ni-RNA pairs
 - plots for distributions, regression, and boxplots
 - Kruskal Wallis test, Dunn's test, and prop.test
-
-
-
+<br />
+<br />
 
 ## list2dist.R & sbatch_4_r.sh
 
@@ -187,8 +190,8 @@ chmod +x list2dist.R
 chmod +x sbatch_4_r.sh
 sbatch sbatch_4_r.sh
 ```
-
-
+<br />
+<br />
 
 ## Run_mantel.R
 
@@ -197,12 +200,8 @@ Mantel test tests for correlation between two matrices. Pairwise miRNA co-occurr
 
 **Usage**: run ```Run_mantel.R``` in RStudio.
 
-
-
-
-
-
-
+<br />
+<br />
 
 
 
